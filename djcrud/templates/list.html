@@ -1,0 +1,84 @@
+{% extends "base.html" %} {%block title%} Lista de Funcionários {%endblock%} {%block content%}
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <h2>Lista de Funcionários</h2>
+    <div>
+    <a class="btn btn-primary btn-sm" href={%url 'create'%}>
+      <i class="bi bi-person-plus-fill"></i> Adicionar
+    </a>
+  </div>
+</div>
+
+<span>Há {{employees_number}} funcionário(s) cadastrados</span>
+
+<table class="table table-bordered mt-4">
+    {%if employees%}
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Contatos</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for employee in employees%}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{employee.employee_id}}</td>
+            <td>{{employee.employee_name}}</td>
+            <td>{{employee.employee_email}}</td>
+            <td>{{employee.employee_contacts}}</td>
+            <td>
+                <a href="{%url 'update' employee.pk%}" class="btn btn-success btn-sm">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <button class="btn btn-danger btn-sm" data-bs-target="#deleteModal" data-bs-toggle="modal" data-id="{{employee.pk}}">
+                  <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {%endfor%}{%else%}
+        <tr>
+            <td colspan="6" class="text-center">
+                Nenhum funcionário cadastrado
+            </td>
+        </tr>
+        {%endif%}
+    </tbody>
+
+      <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteModalLabel">Deseja excluir o funcionário?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Tem certeza de que deseja excluir o funcionário? Esta ação é irreversível!
+        </div>
+        <div class="modal-footer">
+            <form method="POST" id="deleteForm">
+                <button type="submit" class="btn btn-danger"">Excluir</button>
+            </form>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const deleteModal = document.getElementById('deleteModal');
+
+    deleteModal.addEventListener('show.bs.modal', (event) => {
+        const button = event.relatedTarget;
+        const employeeId = button.getAttribute('data-id');
+        const deleteModal = document.getElementById('deleteForm');
+
+        deleteForm.action = `/delete/${employeeId}/`;
+    })
+  </script>
+</table>
+{%endblock%}
